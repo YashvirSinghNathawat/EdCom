@@ -68,7 +68,7 @@ const Course = mongoose.model('Course',courseSchema);
 const Admin = mongoose.model('Admin',adminSchema);
 
 //Connect to database
-mongoose.connect('');
+mongoose.connect('mongodb+srv://ecommerce:KIqb8ZD7wl0vlTGk@cluster0.cp27dqp.mongodb.net/edcom');
 
 // Admin
 app.post('/admin/signup',async (req,res)=>{
@@ -121,20 +121,63 @@ app.get('/admin/getCourses',authenticateAdmin,async (req,res)=>{
 });
 
 // User
-app.post('/user/signup',(req,res)=>{
+app.post('/user/signup',async (req,res)=>{
+    const {username,password} = req.body;
+    
+    const user = await User.findOne({username});
+    if(!user){
+        const obj = {username,password};
+        const newUser = new User(obj);
+        await newUser.save();
+        const token = jwt.sign({ username, role: 'user' }, USER_SECRET, { expiresIn: '1h' });
+        res.send({message: 'User created successfully!!',token});
+    }
+    else{
+        res.status(404).send({message: 'User already exist!'});
+    }
 
 });
-app.post('/user/login',(req,res)=>{
+app.post('/user/login',async (req,res)=>{
+    const {username,password} = req.headers;
+    const user = await User.findOne({username,password});
+    if(user){
+        const token = jwt.sign({ username, role: 'user' }, USER_SECRET, { expiresIn: '1h' });
+        res.send({message: 'LogIn successfully!!',token});
+    }
+    else{
+        res.status(404).send({message: 'User does not exist!'});
+    }
 
 });
-app.post('/user/courses/:courseId',(req,res)=>{
-
+app.post('/user/courses/:courseId',authenticateUser,async (req,res)=>{
+    const course = await Course.findById(req.params.courseId);
+    if(course){
+        const user = await User.findOne({username: req.user.username});
+        if(user){
+            user.purchasedCourses.push(course);
+            await user.save();
+            res.send('Course purchased successfully!!');
+        }   
+        else{
+            res.status(403).send({message : 'User Not found!'});
+        }
+    }
+    else{
+        res.status(404).send({message : 'Course not found!!'});
+    }
 });
-app.get('/user/courses',(req,res)=>{
-
+app.get('/user/courses',authenticateUser,async (req,res)=>{
+    const courses = await Course.find({});
+    res.send({courses});
 });
-app.get('/user/purchasedCourses',(req,res)=>{
-
+app.get('/user/purchasedCourses',authenticateUser,async (req,res)=>{
+    const user = await User.findOne({username : req.user.username}).populate('purchasedCourses');
+    if(user){
+        res.send({courses : user.purchasedCourses || []})
+    }
+    else{
+        res.status(403).send({message : 'User Not found!'});
+    }
 });
 
 
