@@ -34,7 +34,6 @@ const authenticateAdmin = (req,res,next)=>{
             if(err){
                 return res.sendStatus(403);
             }
-            console.log(user);
             req.user = user;
             next();
         });
@@ -76,13 +75,12 @@ app.post('/admin/signup',async (req,res)=>{
     const {username,password} = req.body;
     
     const user = await Admin.findOne({username});
-    console.log(user);
     if(!user){
         const obj = {username,password};
         const newAdmin = new Admin(obj);
         await newAdmin.save();
-        const token = jwt.sign({ username, role: 'admin' }, SECRET, { expiresIn: '1h' });
-        res.send({message: 'User created successfully!!',token});
+        const token = jwt.sign({ username, role: 'admin' }, ADMIN_SECRET, { expiresIn: '1h' });
+        res.send({message: 'Admin created successfully!!',token});
     }
     else{
         res.status(404).send({message: 'Admin already exist!'});
@@ -93,7 +91,7 @@ app.post('/admin/login', async (req,res)=>{
     const {username,password} = req.headers;
     const user = await Admin.findOne({username,password});
     if(user){
-        const token = jwt.sign({ username, role: 'admin' }, SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ username, role: 'admin' }, ADMIN_SECRET, { expiresIn: '1h' });
         res.send({message: 'LogIn successfully!!',token});
     }
     else{
@@ -107,8 +105,19 @@ app.post('/admin/addCourse',authenticateAdmin , async (req,res)=>{
     res.json({ message: 'Course created successfully', courseId: course.id });
 });
 
-app.get('/admin/getCourse',(req,res)=>{
-    res.send('Get all courses');
+app.put('/admin/updateCourse/:courseId',authenticateAdmin, async (req,res)=>{
+    const course = await Course.findByIdAndUpdate(req.params.courseId,req.body,{new:true});
+    if(course){
+        res.send({message : "Course Updated Successfully"});
+    }
+    else{
+        res.status(404).send("Course does not exist!");
+    }
+});
+
+app.get('/admin/getCourses',authenticateAdmin,async (req,res)=>{
+    const course = await Course.find();
+    res.send({course});
 });
 
 // User
