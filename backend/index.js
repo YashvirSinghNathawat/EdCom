@@ -69,7 +69,7 @@ const Course = mongoose.model('Course',courseSchema);
 const Admin = mongoose.model('Admin',adminSchema);
 
 //Connect to database
-mongoose.connect('mongodb+srv://ecommerce:KIqb8ZD7wl0vlTGk@cluster0.cp27dqp.mongodb.net/edcom');
+mongoose.connect();
 
 // Admin
 app.post('/admin/signup',async (req,res)=>{
