@@ -69,12 +69,12 @@ const Course = mongoose.model('Course',courseSchema);
 const Admin = mongoose.model('Admin',adminSchema);
 
 //Connect to database
-mongoose.connect();
+mongoose.connect('');
 
 // Admin
 app.post('/admin/signup',async (req,res)=>{
     const {username,password} = req.body;
-    
+    console.log(username,password)
     const user = await Admin.findOne({username});
     if(!user){
         const obj = {username,password};
@@ -120,6 +120,14 @@ app.get('/admin/getCourses',authenticateAdmin,async (req,res)=>{
     const course = await Course.find();
     res.send({course});
 });
+
+app.get('/admin/me',authenticateAdmin,(req,res)=>{
+    res.json({
+        username: req.user.username
+    })
+})
+
+
 
 // User
 app.post('/user/signup',async (req,res)=>{
