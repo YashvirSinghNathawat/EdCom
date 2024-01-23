@@ -6,6 +6,8 @@
 #root {
   height: 100vh;
   width: 100vw;
-  
 }
 
+.customButton:hover{
+  background-color: #F3F8FF;
+}

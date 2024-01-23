@@ -69,7 +69,7 @@ const Course = mongoose.model('Course',courseSchema);
 const Admin = mongoose.model('Admin',adminSchema);
 
 //Connect to database
-mongoose.connect('');
+mongoose.connect('mongodb+srv://ecommerce:KIqb8ZD7wl0vlTGk@cluster0.cp27dqp.mongodb.net/edcom');
 
 // Admin
 app.post('/admin/signup',async (req,res)=>{
@@ -121,7 +121,12 @@ app.get('/admin/getCourses',authenticateAdmin,async (req,res)=>{
     res.send({course});
 });
 
-app.get('/admin/me',authenticateAdmin,(req,res)=>{
+app.get('/admin/me',authenticateAdmin,async (req,res)=>{
+    const admin = await Admin.findOne({username : req.user.username});
+    if(!admin){
+        res.status(403).json({message:"Admin doesnt exist!"});
+        return;
+    }
     res.json({
         username: req.user.username
     })

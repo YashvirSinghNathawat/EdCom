@@ -14,7 +14,8 @@ function LogIn(){
             },
         }).then(response => response.json())
         .then(data => {
-            localStorage.setItem("token",data.token)
+            localStorage.setItem("token",data.token);
+            window.location = "/";
         });
     };
     return (
