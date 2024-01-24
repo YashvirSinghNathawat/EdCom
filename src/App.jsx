@@ -3,6 +3,7 @@ import Header from "./Component/AppBar";
 import SignIn from "./Component/SignIn";
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import LogIn from './Component/LogIn';
+import AddCourse from './Component/AddCourse';
 function App() {
   return (
     <>
@@ -13,6 +14,7 @@ function App() {
             <Routes>
               <Route path="/signup" element={<SignIn/>}></Route>
               <Route path="/login" element={<LogIn/>}></Route>
+              <Route path="/addCourse" element={<AddCourse/>}></Route>
             </Routes>
           </Router> 
       </div>
