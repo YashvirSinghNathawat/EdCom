@@ -27,7 +27,7 @@ function Header(){
     },[]);
     return (
         <Box>
-            <AppBar position="static" sx={{height:'10%' ,background: '#040D12',display:'flex',justifyContent:'space-between'}}>
+            <AppBar position="static" sx={{height:'10vh' ,background: '#040D12',display:'flex',justifyContent:'space-between'}}>
                 <Toolbar>
                 <Typography variant="h6" component={"h6"} >EdCom</Typography>
                 <Tabs textColor="inhirit">

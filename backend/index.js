@@ -117,8 +117,8 @@ app.put('/admin/updateCourse/:courseId',authenticateAdmin, async (req,res)=>{
 });
 
 app.get('/admin/getCourses',authenticateAdmin,async (req,res)=>{
-    const course = await Course.find();
-    res.send({course});
+    const courses = await Course.find();
+    res.send({courses});
 });
 
 app.get('/admin/me',authenticateAdmin,async (req,res)=>{
